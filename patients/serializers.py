@@ -9,10 +9,11 @@ class PatientRecordSerializer(serializers.ModelSerializer):
         model = PatientRecord
         fields = '__all__'
 
-    def create(self, validated_data):
-        # Mask sensitive data
-        validated_data['name'] = fake.name()
-        validated_data['diagnosis'] = fake.catch_phrase()
+    def to_representation(self, instance):
+        # Enmascarar solo al serializar (GET)
+        rep = super().to_representation(instance)
+        rep['name'] = fake.name()
+        rep['diagnosis'] = fake.catch_phrase()
+        return rep
 
-        # Create the PatientRecord instance with masked data
-        return PatientRecord.objects.create(**validated_data)
+    # El método create ya no enmascara, solo guarda los datos reales
